@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RAYLIN ISBACK · OTP Demo</title>
+<style>
+:root{--bg:#090909;--panel:#141414;--panel2:#1b1b1b;--red:#ed1c24;--red2:#ff4148;--muted:#a7a7a7;--line:#2b2b2b}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0%,#321012 0,transparent 34%),var(--bg);color:#f5f5f5;font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:1050px;margin:auto;padding:24px 16px 50px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,#ff3b42,#8d0006);display:grid;place-items:center;font-weight:900;font-size:22px;box-shadow:0 8px 30px #ed1c2438}
+h1{font-size:18px;letter-spacing:.08em;margin:0}header small{color:var(--muted);letter-spacing:.12em}
+.pill{border:1px solid #5b2426;color:#ff777c;background:#251012;padding:7px 11px;border-radius:99px;font-size:12px}
+.hero{padding:26px;border:1px solid #492022;border-radius:22px;background:linear-gradient(115deg,#1c1011,#131313 65%);margin-bottom:18px}
+.hero h2{font-size:clamp(25px,5vw,38px);margin:0 0 8px}.hero h2 span{color:var(--red2)}.hero p{color:#bdbdbd;margin:0;max-width:650px}
+.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;min-width:0}
+.card h3{margin:0 0 16px;font-size:16px}.field{margin:13px 0}.field label{display:block;color:#c7c7c7;font-size:13px;margin-bottom:7px}
+input{width:100%;background:#0d0d0d;border:1px solid #383838;border-radius:11px;padding:13px;color:#fff;font-size:16px;outline:none}
+input:focus{border-color:var(--red);box-shadow:0 0 0 3px #ed1c2420}
+button{border:0;border-radius:11px;background:linear-gradient(135deg,#ff343b,#b90008);color:white;padding:13px 16px;font-weight:750;cursor:pointer;width:100%;font-size:14px}
+button.secondary{background:#242424;border:1px solid #3b3b3b;color:#eee}button:disabled{opacity:.45;cursor:not-allowed}
+.note{font-size:12px;color:var(--muted);margin-top:12px}.result{margin-top:14px;background:#0c0c0c;border:1px dashed #553033;border-radius:12px;padding:14px;min-height:52px;color:#eee;overflow-wrap:anywhere}
+.code{font-size:28px;font-weight:850;letter-spacing:.25em;color:#ff555b}.status{font-size:13px;margin-top:7px;color:#ff888c}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}.stat{background:var(--panel2);border:1px solid var(--line);padding:13px;border-radius:13px}.stat strong{display:block;font-size:22px}.stat span{font-size:11px;color:var(--muted)}
+.history{margin-top:16px}.history-list{display:grid;gap:8px}.entry{display:flex;justify-content:space-between;gap:12px;padding:11px 12px;border-radius:10px;background:#101010;border:1px solid #292929;font-size:13px}.entry small{color:var(--muted)}
+footer{color:#777;font-size:12px;text-align:center;margin-top:22px}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.wrap{padding-top:17px}.hero{padding:21px}.stats{gap:7px}.stat{padding:10px}.stat strong{font-size:19px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="brand"><div class="logo">R</div><div><h1>RAYLIN ISBACK</h1><small>OTP DIALER · DEMO</small></div></div>
+  <div class="pill">● MODO DE PRUEBA</div>
+</header>
+<section class="hero">
+  <h2>Verificación <span>segura</span></h2>
+  <p>Panel de demostración para generar y comprobar códigos de un solo uso. No realiza llamadas ni envía SMS reales.</p>
+</section>
+<div class="grid">
+  <section class="card">
+    <h3>＋ Crear verificación</h3>
+    <div class="field"><label for="phone">Número de prueba (solo referencia)</label><input id="phone" type="tel" placeholder="+1 809 000 0000" maxlength="20" autocomplete="off"></div>
+    <button id="generate">Generar código de prueba</button>
+    <div class="result" id="generated" aria-live="polite">Tu código aparecerá aquí.</div>
+    <p class="note">El código se muestra únicamente en esta página para probar el flujo. No lo compartas ni lo uses para acceder a cuentas ajenas.</p>
+  </section>
+  <section class="card">
+    <h3>✓ Comprobar código</h3>
+    <div class="field"><label for="otp">Código de 6 dígitos</label><input id="otp" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000"></div>
+    <button id="verify" class="secondary">Verificar código</button>
+    <div class="result" id="verification" aria-live="polite">Esperando un código de prueba.</div>
+    <div class="stats">
+      <div class="stat"><strong id="created">0</strong><span>Generados</span></div>
+      <div class="stat"><strong id="checked">0</strong><span>Verificados</span></div>
+      <div class="stat"><strong id="attempts">0/5</strong><span>Intentos</span></div>
+    </div>
+  </section>
+</div>
+<section class="card history">
+  <h3>Actividad reciente</h3>
+  <div class="history-list" id="history"><div class="entry"><span>Sin actividad todavía</span><small>—</small></div></div>
+  <p class="note">Los datos viven solo en la memoria de esta pestaña y se borran al recargarla.</p>
+</section>
+<footer>RAYLIN ISBACK OTP · Prototipo local · Sin conexión a servicios telefónicos</footer>
+</div>
+<script>
+(() => {
+  let currentCode = null, expiresAt = 0, attempts = 0, created = 0, checked = 0, lockedUntil = 0;
+  const $ = id => document.getElementById(id);
+  function log(message, status='') {
+    const item = document.createElement('div'); item.className = 'entry';
+    const left = document.createElement('span'); left.textContent = message;
+    const right = document.createElement('small'); right.textContent = new Date().toLocaleTimeString();
+    item.append(left,right); $('history').prepend(item);
+    while ($('history').children.length > 6) $('history').lastElementChild.remove();
+  }
+  function stats(){ $('created').textContent=created; $('checked').textContent=checked; $('attempts').textContent=attempts+'/5'; }
+  $('generate').addEventListener('click', () => {
+    const phone = $('phone').value.trim();
+    if (!phone) { $('generated').textContent='Escribe un número de prueba o una etiqueta para continuar.'; return; }
+    if (Date.now() < lockedUntil) { $('generated').textContent='Espera un momento antes de generar otro código.'; return; }
+    currentCode = String(Math.floor(100000 + Math.random()*900000));
+    expiresAt = Date.now() + 5*60*1000; attempts = 0; created++;
+    $('generated').innerHTML = '<div class="code"></div><div class="status">Código de demostración · válido durante 5 minutos</div>';
+    $('generated').querySelector('.code').textContent = currentCode;
+    $('verification').textContent='Código creado. Introduce los 6 dígitos para comprobarlo.';
+    stats(); log('Código de prueba generado para '+phone);
+    lockedUntil = Date.now()+15000;
+    $('generate').disabled = true;
+    setTimeout(() => {$('generate').disabled=false;},15000);
+  });
+  $('verify').addEventListener('click', () => {
+    const entered = $('otp').value.trim();
+    if (!currentCode) { $('verification').textContent='Primero genera un código de prueba.'; return; }
+    if (Date.now() > expiresAt) { currentCode=null; $('verification').textContent='El código expiró. Genera uno nuevo.'; return; }
+    if (attempts >= 5) { $('verification').textContent='Límite de intentos alcanzado. Genera un código nuevo más tarde.'; return; }
+    if (!/^\d{6}$/.test(entered)) { $('verification').textContent='Escribe exactamente 6 dígitos.'; return; }
+    attempts++;
+    if (entered === currentCode) {
+      checked++; currentCode=null; $('verification').textContent='✓ Código correcto. Verificación de prueba completada.'; log('Verificación de prueba correcta');
+    } else {
+      $('verification').textContent='Código incorrecto. Revisa e inténtalo de nuevo.'; log('Intento de verificación no válido');
+    }
+    stats();
+  });
+  $('otp').addEventListener('input', e => { e.target.value=e.target.value.replace(/\D/g,'').slice(0,6); });
+})();
+</script>
+</body>
+</html>
